@@ -1,14 +1,20 @@
-import './assets/main.css'
+import 'bulma/bulma.sass';
 
-import { createApp } from 'vue'
-import { createPinia } from 'pinia'
+import { createApp } from 'vue';
+import { createPinia } from 'pinia';
 
-import App from './App.vue'
-import router from './router'
+import App from './App.vue';
+import router from './router';
 
-const app = createApp(App)
+import BaseContainer from '@/components/UI/BaseContainer.vue';
+import BaseBox from '@/components/UI/BaseBox.vue';
 
-app.use(createPinia())
-app.use(router)
+const app = createApp(App);
 
-app.mount('#app')
+app.use(createPinia());
+app.use(router);
+
+app.component('base-container', BaseContainer);
+app.component('base-box', BaseBox);
+
+app.mount('#app');
