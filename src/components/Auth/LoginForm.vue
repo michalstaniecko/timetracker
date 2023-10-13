@@ -16,7 +16,7 @@
       </div>
     </div>
 
-    <button class="button is-primary">Sign in</button>
+    <button class="button is-primary">Login</button>
   </form>
 </template>
 
