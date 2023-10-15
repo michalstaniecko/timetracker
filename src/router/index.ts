@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import Home from '../views/Home.vue';
 import Auth from '@/views/Auth.vue';
 import ProjectList from '@/views/Project/ProjectList.vue';
+import { getIsAuth } from '@/js/firebase';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -9,7 +10,10 @@ const router = createRouter({
     {
       path: '/auth',
       name: 'auth',
-      component: Auth
+      component: Auth,
+      meta: {
+        requireGuest: true
+      }
     },
     {
       path: '/',
@@ -19,13 +23,22 @@ const router = createRouter({
     {
       path: '/projects',
       name: 'projects',
-      component: ProjectList
+      component: ProjectList,
+      meta: {
+        requireAuth: true
+      }
     }
   ]
 });
 
-router.beforeEach((to, form, next) => {
-  return next();
+router.beforeEach(async (to, form) => {
+  const isAuth = await getIsAuth();
+
+  if (!isAuth && to.meta.requireAuth) return '/auth';
+
+  if (isAuth && to.meta.requireGuest) return '/projects';
+
+  return true;
 });
 
 export default router;

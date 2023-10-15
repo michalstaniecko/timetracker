@@ -1,20 +1,50 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import type { Timestamp } from 'firebase/firestore';
+import { useTimerStore } from '@/stores/timer';
+import { computed } from 'vue';
+
+const props = defineProps<{
+  title: string;
+  description?: string;
+  created: Timestamp;
+  projectId: string;
+}>();
+
+const timerStore = useTimerStore();
+
+const startHandler = () => {
+  timerStore.set({ projectId: props.projectId });
+};
+
+const stopHandler = () => {
+  timerStore.stop();
+};
+
+const timerIsRunning = computed(() => timerStore.isRunning);
+const currentProjectTimerIsRunning = computed(
+  () => timerStore.isRunning && props.projectId === timerStore.getProjectId
+);
+</script>
 
 <template>
   <div class="card">
     <header class="card-header">
-      <p class="card-header-title">Component</p>
+      <p class="card-header-title">{{ title }} {{ projectId }}</p>
     </header>
     <div class="card-content">
       <div class="content">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec iaculis mauris.
-        <a href="#">@bulmaio</a>. <a href="#">#css</a> <a href="#">#responsive</a>
+        {{ description }}
       </div>
     </div>
     <footer class="card-footer">
       <a href="#" class="card-footer-item">Details</a>
       <span class="card-footer-item">Summary</span>
-      <a href="#" class="card-footer-item">Start timer</a>
+      <div class="card-footer-item">
+        <button class="button" @click.prevent="startHandler" v-if="!currentProjectTimerIsRunning">
+          Start timer
+        </button>
+        <button class="button" @click.prevent="stopHandler" v-else>Stop timer</button>
+      </div>
     </footer>
   </div>
 </template>

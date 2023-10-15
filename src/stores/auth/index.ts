@@ -1,5 +1,9 @@
 import { defineStore } from 'pinia';
 
+import { useProjectsStore } from '@/stores/projects';
+import { useUserStore } from '@/stores/user';
+import { useTimerStore } from '@/stores/timer';
+
 import {
   createUserWithEmailAndPassword,
   signOut,
@@ -13,17 +17,36 @@ import type { formPayload } from '@/components/Auth/interfaces';
 import type { UserCredential } from 'firebase/auth';
 
 export const useAuthStore = defineStore('auth', {
-  state: () => ({
+  state: (): { credentials: { id?: string } } => ({
     credentials: {}
   }),
-  getters: {},
+  getters: {
+    isLogged(): boolean {
+      return !!this.credentials.id;
+    },
+    getUserId(): string | undefined {
+      return this.credentials.id;
+    }
+  },
   actions: {
-    init() {},
+    init() {
+      const projectsStore = useProjectsStore();
+      const timerStore = useTimerStore();
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          this.credentials.id = user.uid;
+          projectsStore.init();
+          timerStore.init(user.uid);
+        } else {
+          this.credentials = {};
+        }
+      });
+    },
     login({ email, password }: formPayload) {
       return new Promise((resolve, reject) => {
         signInWithEmailAndPassword(auth, email, password)
           .then((userCredential: UserCredential) => {
-            this.credentials = userCredential;
+            this.credentials.id = userCredential.user.uid;
             this.router.push('/projects');
             resolve(true);
           })
@@ -37,7 +60,7 @@ export const useAuthStore = defineStore('auth', {
       return new Promise((resolve, reject) => {
         createUserWithEmailAndPassword(auth, email, password)
           .then((userCredential: UserCredential) => {
-            this.credentials = userCredential;
+            this.credentials.id = userCredential.user.uid;
             this.router.push('/projects');
             resolve(true);
           })
@@ -47,6 +70,14 @@ export const useAuthStore = defineStore('auth', {
           });
       });
     },
-    logout() {}
+    async logout() {
+      try {
+        await signOut(auth);
+        this.router.push('/');
+      } catch (e) {
+        console.error(e);
+      }
+      return true;
+    }
   }
 });

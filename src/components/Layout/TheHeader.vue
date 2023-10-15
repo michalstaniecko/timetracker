@@ -1,4 +1,14 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { useAuthStore } from '@/stores/auth';
+import { computed } from 'vue';
+import { storeToRefs } from 'pinia';
+
+const authStore = useAuthStore();
+
+const isLogged = computed(() => authStore.isLogged);
+
+const handleLogout = () => authStore.logout();
+</script>
 
 <template>
   <nav class="navbar is-primary" role="navigation" aria-label="main navigation">
@@ -24,10 +34,10 @@
       <div class="navbar-end">
         <div class="navbar-item">
           <div class="buttons">
-            <a class="button is-primary">
-              <strong>Sign up</strong>
-            </a>
-            <a class="button is-light"> Log in </a>
+            <router-link class="button is-light" to="/auth" v-if="!isLogged"> Log in </router-link>
+            <router-link class="button is-light" to="/auth" v-else @click="handleLogout">
+              Log out
+            </router-link>
           </div>
         </div>
       </div>
