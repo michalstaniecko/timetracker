@@ -20,7 +20,6 @@ const stopHandler = () => {
   timerStore.stop();
 };
 
-const timerIsRunning = computed(() => timerStore.isRunning);
 const currentProjectTimerIsRunning = computed(
   () => timerStore.isRunning && props.projectId === timerStore.getProjectId
 );
@@ -29,7 +28,7 @@ const currentProjectTimerIsRunning = computed(
 <template>
   <div class="card">
     <header class="card-header">
-      <p class="card-header-title">{{ title }} {{ projectId }}</p>
+      <p class="card-header-title">{{ title }}</p>
     </header>
     <div class="card-content">
       <div class="content">

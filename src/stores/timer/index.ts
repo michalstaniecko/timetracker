@@ -4,46 +4,55 @@ import { db } from '@/js/firebase';
 
 import {
   collection,
-  addDoc,
   CollectionReference,
-  updateDoc,
+  onSnapshot,
   DocumentReference,
   doc,
   setDoc
 } from 'firebase/firestore';
+import type { Unsubscribe } from 'firebase/firestore';
+import { useTracksStore } from '@/stores/tracks/tracks';
 
 let timerCollectionRef: CollectionReference;
 let timerDocRef: DocumentReference;
 
+let unsubscribeSnapshot: Unsubscribe;
+
 export const useTimerStore = defineStore('timer', {
   state: () => ({
-    id: '',
     startTime: 0,
     projectId: '',
     description: '',
-    created: ''
+    created: 0
   }),
   getters: {
-    isRunning({ id }) {
-      return id.length > 0;
+    isRunning({ startTime }) {
+      return startTime > 0;
     },
-    getId: ({ id }) => id,
     getProjectId: ({ projectId }) => projectId
   },
   actions: {
     init(userId: string) {
       timerCollectionRef = collection(db, 'timer');
       timerDocRef = doc(timerCollectionRef, userId);
+      this.get();
+    },
+    get() {
+      unsubscribeSnapshot = onSnapshot(timerDocRef, (doc) => {
+        console.log('unsubscribeTimer', doc.data());
+        this.startTime = doc.data()!.start;
+        this.projectId = doc.data()!.projectId;
+        this.description = doc.data()!.description;
+        this.created = doc.data()!.created;
+      });
     },
     async set({ projectId, description = '' }: { projectId: string; description?: string }) {
       await this.stop();
-      this.id = new Date().getTime().toString();
       this.startTime = new Date().getTime();
       this.projectId = projectId;
       this.description = description;
-      this.created = new Date().getTime().toString();
+      this.created = new Date().getTime();
       setDoc(timerDocRef, {
-        id: this.id,
         start: this.startTime,
         projectId: this.projectId,
         description: this.description,
@@ -53,34 +62,44 @@ export const useTimerStore = defineStore('timer', {
         .catch((error) => {});
     },
     async stop() {
-      if (this.id.length > 0) {
+      if (this.startTime > 0) {
         await this.pushHistory();
         await this.clear();
       }
     },
     async clear() {
       return new Promise((resolve) => {
-        this.id = '';
         this.startTime = 0;
         this.description = '';
         this.projectId = '';
-        resolve(true);
+        setDoc(timerDocRef, {
+          start: 0,
+          projectId: '',
+          description: '',
+          created: 0
+        })
+          .then(() => {
+            resolve(true);
+          })
+          .catch((error) => {});
       });
     },
     async pushHistory() {
       const authStore = useAuthStore();
-      const end = new Date().getTime().toString();
+      const tracksStore = useTracksStore();
+      const end = new Date().getTime();
       const timer = {
         endTime: end,
-        id: this.id,
         description: this.description,
         projectId: this.projectId,
         startTime: this.startTime,
         userId: authStore.getUserId,
         created: this.created
       };
-      // TODO: push to firestore, use tracking store
-      console.log('push history', timer);
+      return await tracksStore.save(timer);
+    },
+    unsubscribe() {
+      if (unsubscribeSnapshot) unsubscribeSnapshot();
     }
   }
 });
