@@ -39,10 +39,14 @@ const currentProjectTimerIsRunning = computed(
       <a href="#" class="card-footer-item">Details</a>
       <span class="card-footer-item">Summary</span>
       <div class="card-footer-item">
-        <button class="button" @click.prevent="startHandler" v-if="!currentProjectTimerIsRunning">
+        <button
+          class="button is-primary"
+          @click.prevent="startHandler"
+          v-if="!currentProjectTimerIsRunning"
+        >
           Start timer
         </button>
-        <button class="button" @click.prevent="stopHandler" v-else>Stop timer</button>
+        <button class="button is-danger" @click.prevent="stopHandler" v-else>Stop timer</button>
       </div>
     </footer>
   </div>

@@ -39,7 +39,8 @@ export const useTimerStore = defineStore('timer', {
     },
     get() {
       unsubscribeSnapshot = onSnapshot(timerDocRef, (doc) => {
-        console.log('unsubscribeTimer', doc.data());
+        if (!doc.data()) return;
+
         this.startTime = doc.data()!.start;
         this.projectId = doc.data()!.projectId;
         this.description = doc.data()!.description;
@@ -99,6 +100,10 @@ export const useTimerStore = defineStore('timer', {
       return await tracksStore.save(timer);
     },
     unsubscribe() {
+      this.startTime = 0;
+      this.projectId = '';
+      this.description = '';
+      this.created = 0;
       if (unsubscribeSnapshot) unsubscribeSnapshot();
     }
   }

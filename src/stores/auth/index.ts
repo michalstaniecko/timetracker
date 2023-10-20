@@ -39,9 +39,12 @@ export const useAuthStore = defineStore('auth', {
           this.credentials.id = user.uid;
           projectsStore.init();
           timerStore.init(user.uid);
-          tracksStore.init();
+          tracksStore.init(user.uid);
         } else {
           this.credentials = {};
+          projectsStore.clear();
+          timerStore.unsubscribe();
+          tracksStore.unsubscribe();
         }
       });
     },

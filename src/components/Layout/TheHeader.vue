@@ -31,6 +31,10 @@ const handleLogout = () => authStore.logout();
     </div>
 
     <div id="navbarBasicExample" class="navbar-menu">
+      <div class="navbar-start">
+        <router-link to="/projects" class="navbar-item">Projects</router-link>
+        <router-link to="/tracks" class="navbar-item">Tracks</router-link>
+      </div>
       <div class="navbar-end">
         <div class="navbar-item">
           <div class="buttons">

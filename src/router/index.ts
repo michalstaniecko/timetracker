@@ -3,6 +3,7 @@ import Home from '../views/Home.vue';
 import Auth from '@/views/Auth.vue';
 import ProjectList from '@/views/Project/ProjectList.vue';
 import { getIsAuth } from '@/js/firebase';
+import TrackList from '@/views/Track/TrackList.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -24,6 +25,14 @@ const router = createRouter({
       path: '/projects',
       name: 'projects',
       component: ProjectList,
+      meta: {
+        requireAuth: true
+      }
+    },
+    {
+      path: '/tracks',
+      name: 'tracks',
+      component: TrackList,
       meta: {
         requireAuth: true
       }

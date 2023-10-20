@@ -17,7 +17,7 @@ const projects: ComputedRef<Project[] | null> = computed(() => projectsStore.get
     <base-box>
       <project-form />
     </base-box>
-    <base-box class="grid" v-if="projects !== null">
+    <base-box class="grid" v-if="projects !== null && projects.length > 0">
       <project-item
         v-for="project in projects"
         :key="project.id"
