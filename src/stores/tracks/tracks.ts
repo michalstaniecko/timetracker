@@ -48,7 +48,6 @@ export const useTracksStore = defineStore('tracks', {
   },
   actions: {
     init(userId: string) {
-      console.log('userId', userId);
       tracksCollectionRef = collection(db, 'tracks');
       tracksQuery = query(
         tracksCollectionRef,

@@ -13,6 +13,7 @@ import {
   Query,
   query,
   where,
+  orderBy,
   onSnapshot,
   getDoc,
   doc
@@ -56,7 +57,8 @@ export const useProjectsStore = defineStore('projects', {
 
       junctionProjectUserQuery = query(
         junctionProjectUserRef,
-        where('userId', '==', authStore.getUserId)
+        where('userId', '==', authStore.getUserId),
+        orderBy('created', 'desc')
       );
 
       this.fetch();
@@ -87,15 +89,17 @@ export const useProjectsStore = defineStore('projects', {
     },
     async add(payload: { title: string; description: string; teamId: string }) {
       const authStore = useAuthStore();
+      const created = Timestamp.now();
       const newProject = {
-        created: Timestamp.now(),
+        created: created,
         ...payload
       };
       try {
         const response = await addDoc(projectsCollectionRef, newProject);
         await addDoc(junctionProjectUserRef, {
           projectId: response.id,
-          userId: authStore.getUserId
+          userId: authStore.getUserId,
+          created: created
         });
       } catch (e) {
         console.log(e);
