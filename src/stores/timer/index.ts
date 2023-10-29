@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import { useAuthStore } from '@/stores/auth';
 import { db } from '@/js/firebase';
+import { useStopwatch } from '@/use/useStopwatch';
 
 import {
   collection,
@@ -12,24 +13,34 @@ import {
 } from 'firebase/firestore';
 import type { Unsubscribe } from 'firebase/firestore';
 import { useTracksStore } from '@/stores/tracks/tracks';
+import moment from 'moment';
 
 let timerCollectionRef: CollectionReference;
 let timerDocRef: DocumentReference;
 
 let unsubscribeSnapshot: Unsubscribe;
 
+const { startStopwatch, stopStopwatch, elapsedTimeRef } = useStopwatch();
+
 export const useTimerStore = defineStore('timer', {
   state: () => ({
     startTime: 0,
     projectId: '',
     description: '',
-    created: 0
+    created: 0,
+    elapsedTimeRef: elapsedTimeRef
   }),
   getters: {
     isRunning({ startTime }) {
       return startTime > 0;
     },
-    getProjectId: ({ projectId }) => projectId
+    getProjectId: ({ projectId }) => projectId,
+    getFormattedElapsedTime: ({ elapsedTimeRef }) => {
+      const duration = moment.duration(elapsedTimeRef);
+      const hours = duration.hours();
+      const formatted = moment(elapsedTimeRef).format('mm:ss');
+      return `${hours}:${formatted}`;
+    }
   },
   actions: {
     init(userId: string) {
@@ -47,12 +58,7 @@ export const useTimerStore = defineStore('timer', {
         this.created = doc.data()!.created;
       });
     },
-    async set({ projectId, description = '' }: { projectId: string; description?: string }) {
-      await this.stop();
-      this.startTime = new Date().getTime();
-      this.projectId = projectId;
-      this.description = description;
-      this.created = new Date().getTime();
+    async set() {
       setDoc(timerDocRef, {
         start: this.startTime,
         projectId: this.projectId,
@@ -64,9 +70,19 @@ export const useTimerStore = defineStore('timer', {
     },
     async stop() {
       if (this.startTime > 0) {
+        stopStopwatch();
         await this.pushHistory();
         await this.clear();
       }
+    },
+    async start({ projectId, description = '' }: { projectId: string; description?: string }) {
+      await this.stop();
+      this.startTime = new Date().getTime();
+      this.projectId = projectId;
+      this.description = description;
+      this.created = new Date().getTime();
+      await this.set();
+      startStopwatch(this.startTime);
     },
     async clear() {
       return new Promise((resolve) => {

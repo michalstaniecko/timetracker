@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import TheHeader from '@/components/Layout/TheHeader.vue';
 import { useAuthStore } from '@/stores/auth';
-import { onMounted } from 'vue';
-import { useProjectsStore } from '@/stores/projects';
+import { onMounted, ref } from 'vue';
+import TimerPopup from '@/components/Layout/TimerPopup.vue';
 
 const authStore = useAuthStore();
 
@@ -15,6 +15,7 @@ onMounted(() => {
   <div>
     <TheHeader />
     <router-view></router-view>
+    <timer-popup />
   </div>
 </template>
 

@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import type { Timestamp } from 'firebase/firestore';
 import { useTimerStore } from '@/stores/timer';
-import { computed } from 'vue';
+import { computed, ref, watch } from 'vue';
+import { storeToRefs } from 'pinia';
+import moment from 'moment';
 
 const props = defineProps<{
   title: string;
@@ -11,9 +13,10 @@ const props = defineProps<{
 }>();
 
 const timerStore = useTimerStore();
+const { elapsedTimeRef, getFormattedElapsedTime } = storeToRefs(timerStore);
 
 const startHandler = () => {
-  timerStore.set({ projectId: props.projectId });
+  timerStore.start({ projectId: props.projectId });
 };
 
 const stopHandler = () => {
@@ -26,7 +29,7 @@ const currentProjectTimerIsRunning = computed(
 </script>
 
 <template>
-  <div class="card">
+  <div class="card" :class="{ 'has-background-primary-light': currentProjectTimerIsRunning }">
     <header class="card-header">
       <p class="card-header-title">{{ title }}</p>
     </header>
@@ -37,7 +40,12 @@ const currentProjectTimerIsRunning = computed(
     </div>
     <footer class="card-footer">
       <a href="#" class="card-footer-item">Details</a>
-      <span class="card-footer-item">Summary</span>
+      <span class="card-footer-item">
+        <div>
+          <div v-if="currentProjectTimerIsRunning">Running: {{ getFormattedElapsedTime }}</div>
+          <div v-else>Summary:</div>
+        </div>
+      </span>
       <div class="card-footer-item">
         <button
           class="button is-primary"

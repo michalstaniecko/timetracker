@@ -8,6 +8,7 @@ import router from './router';
 
 import BaseContainer from '@/components/UI/BaseContainer.vue';
 import BaseBox from '@/components/UI/BaseBox.vue';
+import BasePopup from '@/components/UI/BasePopup.vue';
 
 const app = createApp(App);
 const pinia = createPinia();
@@ -21,5 +22,6 @@ app.use(router);
 
 app.component('base-container', BaseContainer);
 app.component('base-box', BaseBox);
+app.component('base-popup', BasePopup);
 
 app.mount('#app');
