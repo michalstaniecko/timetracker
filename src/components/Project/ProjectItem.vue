@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import type { Timestamp } from 'firebase/firestore';
 import { useTimerStore } from '@/stores/timer';
-import { computed, ref, watch } from 'vue';
+import { useTracksStore } from '@/stores/tracks/tracks';
+import { computed } from 'vue';
 import { storeToRefs } from 'pinia';
-import moment from 'moment';
+import { useFormatTime } from '@/use/useFormatTime';
 
 const props = defineProps<{
   title: string;
@@ -12,8 +13,11 @@ const props = defineProps<{
   projectId: string;
 }>();
 
+const { formatElapsedTime } = useFormatTime();
+const tracksStore = useTracksStore();
 const timerStore = useTimerStore();
-const { elapsedTimeRef, getFormattedElapsedTime } = storeToRefs(timerStore);
+const { getFormattedElapsedTime } = storeToRefs(timerStore);
+const { getTotalByProjectId } = storeToRefs(tracksStore);
 
 const startHandler = () => {
   timerStore.start({ projectId: props.projectId });
@@ -26,6 +30,10 @@ const stopHandler = () => {
 const currentProjectTimerIsRunning = computed(
   () => timerStore.isRunning && props.projectId === timerStore.getProjectId
 );
+
+const totalTimeFormatted = computed(() => {
+  return formatElapsedTime(getTotalByProjectId.value(props.projectId));
+});
 </script>
 
 <template>
@@ -43,7 +51,7 @@ const currentProjectTimerIsRunning = computed(
       <span class="card-footer-item">
         <div>
           <div v-if="currentProjectTimerIsRunning">Running: {{ getFormattedElapsedTime }}</div>
-          <div v-else>Summary:</div>
+          <div v-else>Summary {{ totalTimeFormatted }}</div>
         </div>
       </span>
       <div class="card-footer-item">

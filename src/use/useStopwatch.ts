@@ -6,7 +6,7 @@ export const useStopwatch = () => {
   const elapsedPausedTime = ref(0);
   const elapsedTimeRef = ref(0);
 
-  const startStopwatch = (time) => {
+  const startStopwatch = (time: number) => {
     if (!stopwatchInterval.value) {
       startTime.value = time;
       stopwatchInterval.value = setInterval(updateStopwatch, 1000);
