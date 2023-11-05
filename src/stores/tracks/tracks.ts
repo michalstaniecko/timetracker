@@ -44,7 +44,16 @@ export const useTracksStore = defineStore('tracks', {
       const settingsStore = useSettingsStore();
 
       return moment(timestamp).format(settingsStore.getDateTimeFormat);
-    }
+    },
+    getTotalByProjectId:
+      ({ history }): number =>
+      (projectId: string) => {
+        const tracks = history.filter((item) => item.projectId === projectId);
+        return tracks.reduce((acc, cur) => {
+          acc += cur.endTime - cur.startTime;
+          return acc;
+        }, 0);
+      }
   },
   actions: {
     init(userId: string) {
