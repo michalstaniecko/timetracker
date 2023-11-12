@@ -34,6 +34,8 @@ const currentProjectTimerIsRunning = computed(
 const totalTimeFormatted = computed(() => {
   return formatElapsedTime(getTotalByProjectId.value(props.projectId));
 });
+
+const projectUrl = computed(() => `/projects/${props.projectId}`);
 </script>
 
 <template>
@@ -47,7 +49,9 @@ const totalTimeFormatted = computed(() => {
       </div>
     </div>
     <footer class="card-footer">
-      <a href="#" class="card-footer-item">Details</a>
+      <div class="card-footer-item">
+        <router-link :to="projectUrl" class="button is-info">Details</router-link>
+      </div>
       <span class="card-footer-item">
         <div>
           <div v-if="currentProjectTimerIsRunning">Running: {{ getFormattedElapsedTime }}</div>
