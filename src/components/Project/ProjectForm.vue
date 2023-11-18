@@ -14,7 +14,6 @@ const createTeamHandler = () => {
 };
 
 const submitHandler = () => {
-  console.log('submitHandler');
   projectsStore.add({
     title: title.value,
     teamId: teamId.value,

@@ -21,7 +21,7 @@ import {
 import type { Unsubscribe } from 'firebase/firestore';
 import { db } from '@/js/firebase';
 
-let projectsCollectionRef: CollectionReference, projectsCollectionQuery;
+let projectsCollectionRef: CollectionReference;
 let junctionProjectUserRef: CollectionReference, junctionProjectUserQuery: Query;
 
 let unsubscribeSnapshot: Unsubscribe;
@@ -36,8 +36,9 @@ export const useProjectsStore = defineStore('projects', {
     },
     getById({ projects }): (id: string) => Project | undefined {
       return (id: string): Project | undefined => {
-        if (!projects) return undefined;
-        return projects.find((project) => project.id === id);
+        const project = projects.find((project) => project.id === id);
+        if (project) return project;
+        return undefined;
       };
     },
     getProjects: ({ projects }) => {
@@ -64,7 +65,6 @@ export const useProjectsStore = defineStore('projects', {
       this.fetch();
     },
     fetch() {
-      let projects;
       unsubscribeSnapshot = onSnapshot(
         junctionProjectUserQuery,
         async (querySnapshot) => {
