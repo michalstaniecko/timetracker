@@ -21,7 +21,7 @@ import {
 import type { Unsubscribe } from 'firebase/firestore';
 import { db } from '@/js/firebase';
 
-let projectsCollectionRef: CollectionReference, projectsCollectionQuery;
+let projectsCollectionRef: CollectionReference;
 let junctionProjectUserRef: CollectionReference, junctionProjectUserQuery: Query;
 
 let unsubscribeSnapshot: Unsubscribe;

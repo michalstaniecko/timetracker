@@ -1,14 +1,11 @@
 <script setup lang="ts">
 const props = defineProps<{
-  label?: string;
+  title: string | undefined;
 }>();
 </script>
 
 <template>
-  <div class="box">
-    <base-box-label v-if="label" :label="label" />
-    <slot />
-  </div>
+  <h2 class="subtitle">{{ title }}</h2>
 </template>
 
 <style scoped></style>

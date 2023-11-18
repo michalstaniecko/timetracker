@@ -8,5 +8,9 @@ export const useFormatTime = () => {
     return `${hours}:${formatted}`;
   };
 
-  return { formatElapsedTime };
+  const formatDate = (timestamp: number): string => {
+    return moment(timestamp).format('YYYY-MM-DD');
+  };
+
+  return { formatElapsedTime, formatDate };
 };
