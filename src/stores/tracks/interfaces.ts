@@ -6,4 +6,5 @@ export interface Track {
   startTime: number;
   userId: string | undefined;
   created: number;
+  taskId?: string;
 }

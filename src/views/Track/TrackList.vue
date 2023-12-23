@@ -12,15 +12,16 @@ const tracksFiltered = computed(() => tracksStore.getFiltered());
   <base-container>
     <base-box>Filters</base-box>
     <base-box>
-      <div v-if="!tracksFiltered">Tracking time history is empty!</div>
-      <div v-else>
+      <div v-if="tracksFiltered && tracksFiltered.length > 0">
         <table class="table is-fullwidth">
           <thead>
             <tr>
               <th>Index</th>
               <th>Project</th>
+              <th>Task</th>
               <th>Created</th>
               <th>Duration</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -33,6 +34,8 @@ const tracksFiltered = computed(() => tracksStore.getFiltered());
           </tbody>
         </table>
       </div>
+
+      <div v-else>Tracking time history is empty!</div>
     </base-box>
   </base-container>
 </template>

@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia';
 
 import { useProjectsStore } from '@/stores/projects';
-import { useUserStore } from '@/stores/user';
 import { useTimerStore } from '@/stores/timer';
 import { useTracksStore } from '@/stores/tracks/tracks';
 
@@ -34,6 +33,7 @@ export const useAuthStore = defineStore('auth', {
       const projectsStore = useProjectsStore();
       const timerStore = useTimerStore();
       const tracksStore = useTracksStore();
+
       onAuthStateChanged(auth, (user) => {
         if (user) {
           this.credentials.id = user.uid;

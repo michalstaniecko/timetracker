@@ -81,7 +81,8 @@ export const useTracksStore = defineStore('tracks', {
             startTime: doc.data().startTime,
             created: doc.data().created,
             projectId: doc.data().projectId,
-            userId: doc.data().userId
+            userId: doc.data().userId,
+            taskId: doc.data().taskId
           });
         });
 

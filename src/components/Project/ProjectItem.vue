@@ -2,15 +2,20 @@
 import type { Timestamp } from 'firebase/firestore';
 import { useTimerStore } from '@/stores/timer';
 import { useTracksStore } from '@/stores/tracks/tracks';
-import { computed } from 'vue';
+import { computed, defineEmits } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useFormatTime } from '@/use/useFormatTime';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
 const props = defineProps<{
   title: string;
   description?: string;
   created: Timestamp;
   projectId: string;
+}>();
+
+const emit = defineEmits<{
+  (event: 'remove', id: string): void;
 }>();
 
 const { formatElapsedTime } = useFormatTime();
@@ -36,17 +41,22 @@ const totalTimeFormatted = computed(() => {
 });
 
 const projectUrl = computed(() => `/projects/${props.projectId}`);
+
+const removeHandler = () => {
+  emit('remove', props.projectId);
+};
 </script>
 
 <template>
   <div class="card" :class="{ 'has-background-primary-light': currentProjectTimerIsRunning }">
-    <header class="card-header">
+    <header class="card-header is-align-items-center pr-3">
       <p class="card-header-title">{{ title }}</p>
+      <button @click="removeHandler" class="button is-small is-danger is-inverted">
+        <font-awesome-icon icon="fa-solid fa-trash" />
+      </button>
     </header>
     <div class="card-content">
-      <div class="content">
-        {{ description }}
-      </div>
+      <div class="content">{{ description }}</div>
     </div>
     <footer class="card-footer">
       <div class="card-footer-item">

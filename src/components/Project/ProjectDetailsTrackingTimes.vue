@@ -6,7 +6,7 @@ import TrackingListHead from '@/components/TrackingList/TrackingListHead.vue';
 
 const props = defineProps<{
   list: Track[] | undefined;
-  total: number;
+  total: string;
 }>();
 
 const { formatDate, formatElapsedTime } = useFormatTime();
@@ -20,6 +20,11 @@ const columns = [
   {
     name: 'Duration',
     key: 'duration',
+    width: '150px'
+  },
+  {
+    name: 'Task',
+    key: 'taskId',
     width: '150px'
   },
   {

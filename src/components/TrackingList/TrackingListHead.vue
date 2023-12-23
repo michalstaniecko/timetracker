@@ -7,7 +7,7 @@ const props = defineProps<{
     key: string;
     width: string;
   };
-  total: number;
+  total: string;
 }>();
 
 const isDurationColumn = props.column.key === 'duration';

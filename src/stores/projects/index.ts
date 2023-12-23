@@ -4,6 +4,7 @@ import type { Project } from '@/stores/projects/interfaces';
 import type { Filters } from '@/stores/projects/interfaces';
 
 import { useAuthStore } from '@/stores/auth';
+import { useTasksStore } from '@/stores/tasks';
 
 import {
   addDoc,
@@ -16,13 +17,19 @@ import {
   orderBy,
   onSnapshot,
   getDoc,
+  getDocs,
+  deleteDoc,
   doc
 } from 'firebase/firestore';
 import type { Unsubscribe } from 'firebase/firestore';
 import { db } from '@/js/firebase';
 
 let projectsCollectionRef: CollectionReference;
+let projectsQuery: Query;
 let junctionProjectUserRef: CollectionReference, junctionProjectUserQuery: Query;
+
+let tasksCollectionRef: CollectionReference;
+let tasksCollectionQuery: Query;
 
 let unsubscribeSnapshot: Unsubscribe;
 
@@ -55,35 +62,34 @@ export const useProjectsStore = defineStore('projects', {
       const authStore = useAuthStore();
       projectsCollectionRef = collection(db, 'projects');
       junctionProjectUserRef = collection(db, 'junctionProjectUser');
+      tasksCollectionRef = collection(db, 'tasks');
 
-      junctionProjectUserQuery = query(
-        junctionProjectUserRef,
-        where('userId', '==', authStore.getUserId),
+      projectsQuery = query(
+        projectsCollectionRef,
+        where('users', 'array-contains', authStore.getUserId),
         orderBy('created', 'desc')
       );
 
       this.fetch();
     },
     fetch() {
+      const tasksStore = useTasksStore();
       unsubscribeSnapshot = onSnapshot(
-        junctionProjectUserQuery,
-        async (querySnapshot) => {
-          const projectsDoc = await Promise.all(
-            querySnapshot.docs.map((docSnapshot) => {
-              const projectId = docSnapshot.data().projectId;
-              return getDoc(doc(db, 'projects', projectId));
-            })
-          );
-          this.projects = projectsDoc.map((doc) => {
+        projectsQuery,
+        (querySnapshot) => {
+          this.projects = [];
+          querySnapshot.forEach((doc) => {
             const data = doc.data() as Project;
-            return {
+            this.projects.push({
               ...data,
               id: doc.id
-            };
+            });
           });
+
+          tasksStore.fetch();
         },
         (error) => {
-          console.log(error);
+          console.log('projectsQuery', error);
         }
       );
     },
@@ -92,20 +98,19 @@ export const useProjectsStore = defineStore('projects', {
       const created = Timestamp.now();
       const newProject = {
         created: created,
+        createdBy: authStore.getUserId,
+        users: [authStore.getUserId],
         ...payload
       };
       try {
-        const response = await addDoc(projectsCollectionRef, newProject);
-        await addDoc(junctionProjectUserRef, {
-          projectId: response.id,
-          userId: authStore.getUserId,
-          created: created
-        });
+        await addDoc(projectsCollectionRef, newProject);
       } catch (e) {
         console.log(e);
       }
     },
-    remove() {},
+    async remove(id: string) {
+      await deleteDoc(doc(db, 'projects', id));
+    },
     edit() {},
     clear() {
       this.projects = [];

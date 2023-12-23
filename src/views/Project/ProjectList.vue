@@ -10,6 +10,10 @@ import type { Project } from '@/stores/projects/interfaces';
 const projectsStore = useProjectsStore();
 
 const projects: ComputedRef<Project[] | null> = computed(() => projectsStore.getProjects());
+
+const removeHandler = (id: string) => {
+  projectsStore.remove(id);
+};
 </script>
 
 <template>
@@ -25,6 +29,7 @@ const projects: ComputedRef<Project[] | null> = computed(() => projectsStore.get
         :description="project.description"
         :created="project.created"
         :project-id="project.id"
+        @remove="removeHandler"
       />
     </base-box>
   </base-container>

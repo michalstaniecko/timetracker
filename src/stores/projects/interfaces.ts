@@ -16,6 +16,7 @@ export interface Project {
   tracingHistory?: TrackingTime[];
   teamId: string;
   summary: number;
+  users?: string[];
 }
 
 export type Projects = Project[];
