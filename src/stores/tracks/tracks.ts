@@ -62,31 +62,37 @@ export const useTracksStore = defineStore('tracks', {
   },
   actions: {
     init(userId: string) {
-      tracksCollectionRef = collection(db, 'tracks');
-      tracksQuery = query(
-        tracksCollectionRef,
-        where('userId', '==', userId),
-        orderBy('created', 'desc')
-      );
-      this.fetch();
+      return new Promise((resolve) => {
+        tracksCollectionRef = collection(db, 'tracks');
+        tracksQuery = query(
+          tracksCollectionRef,
+          where('userId', '==', userId),
+          orderBy('created', 'desc')
+        );
+        this.fetch().then(() => resolve(true));
+      });
     },
     fetch() {
-      unsubscribeSnapshot = onSnapshot(tracksQuery, (querySnapshot) => {
-        const history: Track[] = [];
-        querySnapshot.docs.forEach((doc) => {
-          history.push({
-            id: doc.id,
-            description: doc.data().description,
-            endTime: doc.data().endTime,
-            startTime: doc.data().startTime,
-            created: doc.data().created,
-            projectId: doc.data().projectId,
-            userId: doc.data().userId,
-            taskId: doc.data().taskId
+      return new Promise((resolve) => {
+        unsubscribeSnapshot = onSnapshot(tracksQuery, (querySnapshot) => {
+          const history: Track[] = [];
+          querySnapshot.docs.forEach((doc) => {
+            history.push({
+              id: doc.id,
+              description: doc.data().description,
+              endTime: doc.data().endTime,
+              startTime: doc.data().startTime,
+              created: doc.data().created,
+              projectId: doc.data().projectId,
+              userId: doc.data().userId,
+              taskId: doc.data().taskId
+            });
           });
-        });
 
-        this.history = history;
+          this.history = history;
+
+          resolve(true);
+        });
       });
     },
     async save(track: Track) {

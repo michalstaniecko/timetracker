@@ -20,6 +20,7 @@ let timerDocRef: DocumentReference;
 
 let unsubscribeSnapshot: Unsubscribe;
 
+// TODO: stopwatch doesn't run after page refresh
 const { startStopwatch, stopStopwatch, elapsedTimeRef } = useStopwatch();
 
 export const useTimerStore = defineStore('timer', {
@@ -44,18 +45,24 @@ export const useTimerStore = defineStore('timer', {
   },
   actions: {
     init(userId: string) {
-      timerCollectionRef = collection(db, 'timer');
-      timerDocRef = doc(timerCollectionRef, userId);
-      this.get();
+      return new Promise((resolve) => {
+        timerCollectionRef = collection(db, 'timer');
+        timerDocRef = doc(timerCollectionRef, userId);
+        this.get().then(() => resolve(true));
+      });
     },
     get() {
-      unsubscribeSnapshot = onSnapshot(timerDocRef, (doc) => {
-        if (!doc.data()) return;
+      return new Promise((resolve) => {
+        unsubscribeSnapshot = onSnapshot(timerDocRef, (doc) => {
+          if (!doc.data()) return;
 
-        this.startTime = doc.data()!.start;
-        this.projectId = doc.data()!.projectId;
-        this.description = doc.data()!.description;
-        this.created = doc.data()!.created;
+          this.startTime = doc.data()!.start;
+          this.projectId = doc.data()!.projectId;
+          this.description = doc.data()!.description;
+          this.created = doc.data()!.created;
+          if (this.startTime > 0) startStopwatch(this.startTime);
+          resolve(true);
+        });
       });
     },
     async set() {

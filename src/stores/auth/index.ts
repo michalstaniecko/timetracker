@@ -17,8 +17,9 @@ import type { formPayload } from '@/components/Auth/interfaces';
 import type { UserCredential } from 'firebase/auth';
 
 export const useAuthStore = defineStore('auth', {
-  state: (): { credentials: { id?: string } } => ({
-    credentials: {}
+  state: (): { credentials: { id?: string }; isLoaded: boolean } => ({
+    credentials: {},
+    isLoaded: false
   }),
   getters: {
     isLogged(): boolean {
@@ -29,23 +30,28 @@ export const useAuthStore = defineStore('auth', {
     }
   },
   actions: {
-    init() {
+    loadApp(userId: string) {
+      const projectsStore = useProjectsStore();
+      const timerStore = useTimerStore();
+      const tracksStore = useTracksStore();
+      return Promise.all([projectsStore.init(), timerStore.init(userId), tracksStore.init(userId)]);
+    },
+    async init() {
       const projectsStore = useProjectsStore();
       const timerStore = useTimerStore();
       const tracksStore = useTracksStore();
 
-      onAuthStateChanged(auth, (user) => {
+      onAuthStateChanged(auth, async (user) => {
         if (user) {
           this.credentials.id = user.uid;
-          projectsStore.init();
-          timerStore.init(user.uid);
-          tracksStore.init(user.uid);
+          await this.loadApp(user.uid);
         } else {
           this.credentials = {};
           projectsStore.clear();
           timerStore.unsubscribe();
           tracksStore.unsubscribe();
         }
+        this.isLoaded = true;
       });
     },
     login({ email, password }: formPayload) {

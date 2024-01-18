@@ -58,40 +58,46 @@ export const useProjectsStore = defineStore('projects', {
     }
   },
   actions: {
-    init() {
-      const authStore = useAuthStore();
-      projectsCollectionRef = collection(db, 'projects');
-      junctionProjectUserRef = collection(db, 'junctionProjectUser');
-      tasksCollectionRef = collection(db, 'tasks');
+    async init() {
+      return new Promise((resolve) => {
+        const authStore = useAuthStore();
+        projectsCollectionRef = collection(db, 'projects');
+        junctionProjectUserRef = collection(db, 'junctionProjectUser');
+        tasksCollectionRef = collection(db, 'tasks');
 
-      projectsQuery = query(
-        projectsCollectionRef,
-        where('users', 'array-contains', authStore.getUserId),
-        orderBy('created', 'desc')
-      );
+        projectsQuery = query(
+          projectsCollectionRef,
+          where('users', 'array-contains', authStore.getUserId),
+          orderBy('created', 'desc')
+        );
 
-      this.fetch();
+        this.fetch().then(() => resolve(true));
+      });
     },
     fetch() {
-      const tasksStore = useTasksStore();
-      unsubscribeSnapshot = onSnapshot(
-        projectsQuery,
-        (querySnapshot) => {
-          this.projects = [];
-          querySnapshot.forEach((doc) => {
-            const data = doc.data() as Project;
-            this.projects.push({
-              ...data,
-              id: doc.id
+      return new Promise((resolve, reject) => {
+        const tasksStore = useTasksStore();
+        unsubscribeSnapshot = onSnapshot(
+          projectsQuery,
+          (querySnapshot) => {
+            this.projects = [];
+            querySnapshot.forEach((doc) => {
+              const data = doc.data() as Project;
+              this.projects.push({
+                ...data,
+                id: doc.id
+              });
             });
-          });
 
-          tasksStore.fetch();
-        },
-        (error) => {
-          console.log('projectsQuery', error);
-        }
-      );
+            tasksStore.fetch();
+            resolve(true);
+          },
+          (error) => {
+            console.log('projectsQuery', error);
+            reject(error);
+          }
+        );
+      });
     },
     async add(payload: { title: string; description: string; teamId: string }) {
       const authStore = useAuthStore();
