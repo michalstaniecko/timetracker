@@ -66,7 +66,9 @@ export const useTimerStore = defineStore('timer', {
         created: this.created
       })
         .then(() => {})
-        .catch((error) => {});
+        .catch((error) => {
+          console.log(`error ${error}`);
+        });
     },
     async stop() {
       if (this.startTime > 0) {

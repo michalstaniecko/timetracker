@@ -93,8 +93,12 @@ export const useTracksStore = defineStore('tracks', {
       const doc = await addDoc(tracksCollectionRef, track);
       if (doc) return true;
     },
-    edit(id: string) {},
-    delete(id: string) {},
+    edit(id: string) {
+      console.log(`edit ${id}`);
+    },
+    delete(id: string) {
+      console.log(`delete ${id}`);
+    },
     unsubscribe() {
       if (unsubscribeSnapshot) {
         unsubscribeSnapshot();

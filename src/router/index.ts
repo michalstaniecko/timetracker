@@ -48,7 +48,7 @@ const router = createRouter({
   ]
 });
 
-router.beforeEach(async (to, form) => {
+router.beforeEach(async (to) => {
   const isAuth = await getIsAuth();
 
   if (!isAuth && to.meta.requireAuth) return '/auth';

@@ -4,7 +4,7 @@ import { db } from '@/js/firebase';
 import { useAuthStore } from '@/stores/auth';
 import { useProjectsStore } from '@/stores/projects';
 
-import { collection, doc, query, onSnapshot, where, Query } from 'firebase/firestore';
+import { collection, query, onSnapshot, where, Query } from 'firebase/firestore';
 
 const tasksCollectionRef = collection(db, 'tasks');
 let tasksCollectionQuery: Query;
