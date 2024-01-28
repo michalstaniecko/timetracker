@@ -1,5 +1,5 @@
 export interface Track {
-  id?: string;
+  id: string;
   endTime: number;
   description?: string;
   projectId: string;
