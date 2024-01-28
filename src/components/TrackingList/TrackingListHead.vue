@@ -1,11 +1,9 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-
 const props = defineProps<{
   column: {
     name: string;
     key: string;
-    width: string;
+    width?: string;
   };
   total: string;
 }>();

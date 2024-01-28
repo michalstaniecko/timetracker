@@ -16,8 +16,6 @@ import {
   where,
   orderBy,
   onSnapshot,
-  getDoc,
-  getDocs,
   deleteDoc,
   doc
 } from 'firebase/firestore';
@@ -26,10 +24,9 @@ import { db } from '@/js/firebase';
 
 let projectsCollectionRef: CollectionReference;
 let projectsQuery: Query;
-let junctionProjectUserRef: CollectionReference, junctionProjectUserQuery: Query;
+let junctionProjectUserRef: CollectionReference;
 
 let tasksCollectionRef: CollectionReference;
-let tasksCollectionQuery: Query;
 
 let unsubscribeSnapshot: Unsubscribe;
 

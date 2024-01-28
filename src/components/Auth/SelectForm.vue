@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { modeType } from '@/components/Auth/interfaces';
 
-const props = defineProps<{
+defineProps<{
   mode: string;
 }>();
 

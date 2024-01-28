@@ -1,15 +1,12 @@
 <script setup lang="ts">
 import type { Track } from '@/stores/tracks/interfaces';
-import { useFormatTime } from '@/use/useFormatTime';
 import TrackingListRow from '@/components/TrackingList/TrackingListRow.vue';
 import TrackingListHead from '@/components/TrackingList/TrackingListHead.vue';
 
-const props = defineProps<{
+defineProps<{
   list: Track[] | undefined;
   total: string;
 }>();
-
-const { formatDate, formatElapsedTime } = useFormatTime();
 
 const columns = [
   {

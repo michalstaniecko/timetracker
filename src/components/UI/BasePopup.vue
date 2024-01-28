@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 const emits = defineEmits<{
   (event: 'close'): void;
 }>();
-const props = withDefaults(
+withDefaults(
   defineProps<{
     show: boolean;
     icon: string;
