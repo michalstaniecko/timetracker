@@ -17,6 +17,8 @@ import type { Unsubscribe } from 'firebase/firestore';
 
 import moment from 'moment';
 
+type Timer = Omit<Track, 'id'>;
+
 let tracksCollectionRef: CollectionReference;
 let tracksQuery: Query;
 let unsubscribeSnapshot: Unsubscribe;
@@ -62,34 +64,40 @@ export const useTracksStore = defineStore('tracks', {
   },
   actions: {
     init(userId: string) {
-      tracksCollectionRef = collection(db, 'tracks');
-      tracksQuery = query(
-        tracksCollectionRef,
-        where('userId', '==', userId),
-        orderBy('created', 'desc')
-      );
-      this.fetch();
-    },
-    fetch() {
-      unsubscribeSnapshot = onSnapshot(tracksQuery, (querySnapshot) => {
-        const history: Track[] = [];
-        querySnapshot.docs.forEach((doc) => {
-          history.push({
-            id: doc.id,
-            description: doc.data().description,
-            endTime: doc.data().endTime,
-            startTime: doc.data().startTime,
-            created: doc.data().created,
-            projectId: doc.data().projectId,
-            userId: doc.data().userId,
-            taskId: doc.data().taskId
-          });
-        });
-
-        this.history = history;
+      return new Promise((resolve) => {
+        tracksCollectionRef = collection(db, 'tracks');
+        tracksQuery = query(
+          tracksCollectionRef,
+          where('userId', '==', userId),
+          orderBy('created', 'desc')
+        );
+        this.fetch().then(() => resolve(true));
       });
     },
-    async save(track: Track) {
+    fetch() {
+      return new Promise((resolve) => {
+        unsubscribeSnapshot = onSnapshot(tracksQuery, (querySnapshot) => {
+          const history: Track[] = [];
+          querySnapshot.docs.forEach((doc) => {
+            history.push({
+              id: doc.id,
+              description: doc.data().description,
+              endTime: doc.data().endTime,
+              startTime: doc.data().startTime,
+              created: doc.data().created,
+              projectId: doc.data().projectId,
+              userId: doc.data().userId,
+              taskId: doc.data().taskId
+            });
+          });
+
+          this.history = history;
+
+          resolve(true);
+        });
+      });
+    },
+    async save(track: Timer) {
       const doc = await addDoc(tracksCollectionRef, track);
       if (doc) return true;
     },

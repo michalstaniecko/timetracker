@@ -14,9 +14,9 @@ import BaseBoxLabel from '@/components/UI/BaseBoxLabel.vue';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
-import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faTrash, faWindowMinimize, faXmark } from '@fortawesome/free-solid-svg-icons';
 
-library.add(faTrash);
+library.add(faTrash, faWindowMinimize, faXmark);
 
 const app = createApp(App);
 const pinia = createPinia();

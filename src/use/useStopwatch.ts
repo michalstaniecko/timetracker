@@ -20,11 +20,6 @@ export const useStopwatch = () => {
     elapsedTimeRef.value = 0;
   };
 
-  const resetStopwatch = () => {
-    stopStopwatch();
-    elapsedPausedTime.value = 0;
-  };
-
   const updateStopwatch = () => {
     const currentTime = new Date().getTime();
     elapsedTimeRef.value = currentTime - startTime.value;
