@@ -1,8 +1,18 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 
 const email = ref('');
 const password = ref('');
+
+const props = withDefaults(
+  defineProps<{
+    errorMessage: string;
+    onChangeForm: () => void;
+  }>(),
+  {
+    errorMessage: ''
+  }
+);
 
 const emits = defineEmits<{
   (
@@ -19,6 +29,12 @@ const handleSubmit = () =>
     email: email.value,
     password: password.value
   });
+
+const isError = computed(() => props.errorMessage !== '');
+
+const handleInput = () => {
+  props.onChangeForm();
+};
 </script>
 
 <template>
@@ -26,16 +42,30 @@ const handleSubmit = () =>
     <div class="field">
       <label class="label">Email</label>
       <div class="control">
-        <input class="input" v-model="email" type="email" placeholder="e.g. alex@example.com" />
+        <input
+          class="input"
+          @input="handleInput"
+          v-model.lazy="email"
+          type="email"
+          placeholder="e.g. alex@example.com"
+        />
       </div>
     </div>
 
     <div class="field">
       <label class="label">Password</label>
       <div class="control">
-        <input class="input" v-model="password" type="password" placeholder="********" />
+        <input
+          class="input"
+          @input="handleInput"
+          v-model="password"
+          type="password"
+          placeholder="********"
+        />
       </div>
     </div>
+
+    <p v-if="isError" class="help is-danger mb-3">{{ errorMessage }}</p>
 
     <button type="submit" class="button is-primary">Login</button>
   </form>
