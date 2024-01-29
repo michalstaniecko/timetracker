@@ -2,14 +2,12 @@ import { defineStore } from 'pinia';
 import { db } from '@/js/firebase';
 import type { Track } from '@/stores/tracks/interfaces';
 
-import { useAuthStore } from '@/stores/auth';
 import { useProjectsStore } from '@/stores/projects';
 
 import { collection, query, onSnapshot, where, Query } from 'firebase/firestore';
 
 const tasksCollectionRef = collection(db, 'tasks');
 let tasksCollectionQuery: Query;
-let unsubscribeSnapshot;
 
 export const useTasksStore = defineStore('tasks', {
   state: (): {
@@ -49,7 +47,7 @@ export const useTasksStore = defineStore('tasks', {
       const projects = projectStore.getProjects();
       const projectsId = projects!.map((project) => project.id);
       tasksCollectionQuery = query(tasksCollectionRef, where('projectId', 'in', projectsId));
-      unsubscribeSnapshot = onSnapshot(tasksCollectionQuery, (querySnapshot) => {
+      onSnapshot(tasksCollectionQuery, (querySnapshot) => {
         this.tasks = querySnapshot.docs.map((doc) => {
           return doc.data() as Track;
         });

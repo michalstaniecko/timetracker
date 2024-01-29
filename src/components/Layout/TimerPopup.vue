@@ -22,8 +22,6 @@ const handleChange = (e: Event) => {
   timerStore.set();
 };
 
-const title = ref<string>();
-
 show.value = isRunning.value;
 
 watch(isRunning, (newValue) => {

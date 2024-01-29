@@ -24,9 +24,6 @@ import { db } from '@/js/firebase';
 
 let projectsCollectionRef: CollectionReference;
 let projectsQuery: Query;
-let junctionProjectUserRef: CollectionReference;
-
-let tasksCollectionRef: CollectionReference;
 
 let unsubscribeSnapshot: Unsubscribe;
 
@@ -59,8 +56,6 @@ export const useProjectsStore = defineStore('projects', {
       return new Promise((resolve) => {
         const authStore = useAuthStore();
         projectsCollectionRef = collection(db, 'projects');
-        junctionProjectUserRef = collection(db, 'junctionProjectUser');
-        tasksCollectionRef = collection(db, 'tasks');
 
         projectsQuery = query(
           projectsCollectionRef,

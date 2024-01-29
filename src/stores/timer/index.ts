@@ -107,7 +107,7 @@ export const useTimerStore = defineStore('timer', {
           .then(() => {
             resolve(true);
           })
-          .catch((error) => {});
+          .catch(() => {});
       });
     },
     async pushHistory() {

@@ -17,6 +17,8 @@ import type { Unsubscribe } from 'firebase/firestore';
 
 import moment from 'moment';
 
+type Timer = Omit<Track, 'id'>;
+
 let tracksCollectionRef: CollectionReference;
 let tracksQuery: Query;
 let unsubscribeSnapshot: Unsubscribe;
@@ -95,7 +97,7 @@ export const useTracksStore = defineStore('tracks', {
         });
       });
     },
-    async save(track: Track) {
+    async save(track: Timer) {
       const doc = await addDoc(tracksCollectionRef, track);
       if (doc) return true;
     },
