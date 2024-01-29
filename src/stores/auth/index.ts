@@ -63,8 +63,7 @@ export const useAuthStore = defineStore('auth', {
             resolve(true);
           })
           .catch((error) => {
-            console.error(error);
-            reject(false);
+            reject(error.code);
           });
       });
     },
@@ -77,8 +76,7 @@ export const useAuthStore = defineStore('auth', {
             resolve(true);
           })
           .catch((error) => {
-            console.log('signup', error);
-            reject(false);
+            reject(error.code);
           });
       });
     },

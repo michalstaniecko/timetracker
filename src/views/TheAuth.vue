@@ -6,8 +6,12 @@ import { ref } from 'vue';
 import type { modeType } from '@/components/Auth/interfaces';
 import type { formPayload } from '@/components/Auth/interfaces';
 import { useAuthStore } from '@/stores/auth';
+import useErrorAuth from '@/js/auth/error';
+import { type ErrorKeys } from '@/js/auth/error';
 
 const authStore = useAuthStore();
+
+const { errorMessage, setError, clearError } = useErrorAuth();
 
 const component = {
   login: LoginForm,
@@ -18,12 +22,17 @@ const selectedMode = ref<modeType>('login');
 const isLoading = ref(false);
 
 const handleModeUpdate = (mode: modeType) => {
+  clearError();
   selectedMode.value = mode;
+};
+
+const handleChange = () => {
+  console.log('handleChange');
+  clearError();
 };
 
 const handleSubmit = async (payload: formPayload) => {
   isLoading.value = true;
-  console.log(payload);
   try {
     if (selectedMode.value === 'signup') {
       await authStore.signup(payload);
@@ -32,7 +41,9 @@ const handleSubmit = async (payload: formPayload) => {
       await authStore.login(payload);
     }
   } catch (e) {
-    console.error(e);
+    setError(e as ErrorKeys);
+  } finally {
+    isLoading.value = false;
   }
 };
 </script>
@@ -41,7 +52,12 @@ const handleSubmit = async (payload: formPayload) => {
   <base-container>
     <select-form :mode="selectedMode" @update="handleModeUpdate" />
     <base-box>
-      <component :is="component[selectedMode]" @submit="handleSubmit" />
+      <component
+        @changeForm="handleChange"
+        :is="component[selectedMode]"
+        @submit="handleSubmit"
+        :errorMessage="errorMessage"
+      />
     </base-box>
   </base-container>
 </template>
