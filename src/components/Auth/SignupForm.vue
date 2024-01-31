@@ -8,9 +8,11 @@ const props = withDefaults(
   defineProps<{
     errorMessage: string;
     onChangeForm: () => void;
+    isPending: boolean;
   }>(),
   {
-    errorMessage: ''
+    errorMessage: '',
+    isPending: false
   }
 );
 
@@ -67,7 +69,7 @@ const handleInput = () => {
 
     <p v-if="isError" class="help is-danger mb-3">{{ errorMessage }}</p>
 
-    <button class="button is-primary" type="submit">Signup</button>
+    <button :disabled="isPending" class="button is-primary" type="submit">Signup</button>
   </form>
 </template>
 

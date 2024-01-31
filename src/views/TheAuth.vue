@@ -19,7 +19,7 @@ const component = {
 };
 
 const selectedMode = ref<modeType>('login');
-const isLoading = ref(false);
+const isPending = ref(false);
 
 const handleModeUpdate = (mode: modeType) => {
   clearError();
@@ -32,7 +32,7 @@ const handleChange = () => {
 };
 
 const handleSubmit = async (payload: formPayload) => {
-  isLoading.value = true;
+  isPending.value = true;
   try {
     if (selectedMode.value === 'signup') {
       await authStore.signup(payload);
@@ -43,7 +43,7 @@ const handleSubmit = async (payload: formPayload) => {
   } catch (e) {
     setError(e as ErrorKeys);
   } finally {
-    isLoading.value = false;
+    isPending.value = false;
   }
 };
 </script>
@@ -57,6 +57,7 @@ const handleSubmit = async (payload: formPayload) => {
         :is="component[selectedMode]"
         @submit="handleSubmit"
         :errorMessage="errorMessage"
+        :isPending="isPending"
       />
     </base-box>
   </base-container>
