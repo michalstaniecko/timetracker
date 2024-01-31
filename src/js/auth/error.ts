@@ -1,6 +1,7 @@
 import { ref } from 'vue';
 
 export type ErrorKeys =
+  | 'auth/missing-email'
   | 'auth/user-not-found'
   | 'auth/wrong-password'
   | 'auth/email-already-in-use'
@@ -14,6 +15,7 @@ type ErrorMessages = {
 };
 
 const availableErrors: ErrorMessages = {
+  'auth/missing-email': 'Missing email address',
   'auth/user-not-found': 'User not found',
   'auth/wrong-password': 'Wrong password',
   'auth/email-already-in-use': 'Email already in use',

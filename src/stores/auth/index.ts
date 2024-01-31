@@ -8,7 +8,8 @@ import {
   createUserWithEmailAndPassword,
   signOut,
   signInWithEmailAndPassword,
-  onAuthStateChanged
+  onAuthStateChanged,
+  sendPasswordResetEmail
 } from 'firebase/auth';
 
 import { auth } from '@/js/firebase';
@@ -76,6 +77,18 @@ export const useAuthStore = defineStore('auth', {
             resolve(true);
           })
           .catch((error) => {
+            reject(error.code);
+          });
+      });
+    },
+    resetPassword(email: string) {
+      return new Promise((resolve, reject) => {
+        sendPasswordResetEmail(auth, email)
+          .then(() => {
+            resolve(true);
+          })
+          .catch((error) => {
+            console.log(error);
             reject(error.code);
           });
       });
