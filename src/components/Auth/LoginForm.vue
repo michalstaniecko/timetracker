@@ -24,6 +24,12 @@ const emits = defineEmits<{
       password: string;
     }
   ): void;
+  (
+    e: 'resetPassword',
+    value: {
+      email: string;
+    }
+  ): void;
 }>();
 
 const handleSubmit = () =>
@@ -36,6 +42,12 @@ const isError = computed(() => props.errorMessage !== '');
 
 const handleInput = () => {
   props.onChangeForm();
+};
+
+const handleClickResetPassword = () => {
+  emits('resetPassword', {
+    email: email.value
+  });
 };
 </script>
 
@@ -69,7 +81,10 @@ const handleInput = () => {
 
     <p v-if="isError" class="help is-danger mb-3">{{ errorMessage }}</p>
 
-    <button :disabled="isPending" type="submit" class="button is-primary">Login</button>
+    <div class="buttons my-3">
+      <button :disabled="isPending" type="submit" class="button is-primary">Login</button>
+      <button class="button  is-info is-o" role="button" type="button" @click="handleClickResetPassword">Reset password</button>
+    </div>
   </form>
 </template>
 

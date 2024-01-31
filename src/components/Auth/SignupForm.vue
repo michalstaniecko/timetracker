@@ -24,6 +24,12 @@ const emits = defineEmits<{
       password: string;
     }
   ): void;
+  (
+    e: 'resetPassword',
+    value: {
+      email: string;
+    }
+  ): void;
 }>();
 
 const handleSubmit = () =>
