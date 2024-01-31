@@ -45,7 +45,6 @@ const handleInput = () => {
 };
 
 const handleClickResetPassword = () => {
-  console.log('handleClickResetPassword');
   emits('resetPassword', {
     email: email.value
   });
