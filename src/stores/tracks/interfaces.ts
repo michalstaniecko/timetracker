@@ -8,3 +8,9 @@ export interface Track {
   created: number;
   taskId?: string;
 }
+
+export interface Filters {
+  projectId: string;
+  dateFrom: number;
+  dateTo: number;
+}

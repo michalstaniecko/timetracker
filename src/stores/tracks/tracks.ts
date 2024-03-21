@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import type { Track } from '@/stores/tracks/interfaces';
+import type { Track, Filters } from '@/stores/tracks/interfaces';
 import { useSettingsStore } from '@/stores/settings/settings';
 
 import { db } from '@/js/firebase';
@@ -26,15 +26,32 @@ let unsubscribeSnapshot: Unsubscribe;
 export const useTracksStore = defineStore('tracks', {
   state: (): {
     history: Track[];
+    filters: Filters | null;
   } => ({
-    history: []
+    history: [],
+    filters: null
   }),
   getters: {
-    getFiltered:
-      ({ history }) =>
-      (filters = null) => {
-        if (filters === null) return history;
-      },
+    getFiltered: ({ history, filters }) => {
+      if (!filters) {
+        return history;
+      }
+
+      let filtered = [...history];
+
+      if (filters.dateFrom) {
+        filtered = filtered.filter((item) => item.created >= filters.dateFrom);
+      }
+
+      if (filtered.length > 0) {
+        if (filters.dateTo) {
+          filtered = filtered.filter((item) => item.created <= filters.dateTo);
+        }
+      }
+
+      return filtered;
+    },
+
     duration: () => (from: number, to: number) => {
       const dateFrom = moment(from);
       const dateTo = moment(to);
@@ -112,6 +129,9 @@ export const useTracksStore = defineStore('tracks', {
         unsubscribeSnapshot();
         this.history = [];
       }
+    },
+    updateFilter(filter) {
+      this.filters = { ...this.filters, ...filter };
     }
   }
 });
